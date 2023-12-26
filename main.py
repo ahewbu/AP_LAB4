@@ -7,12 +7,27 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from collections import Counter
 
-def count_words(text):
+
+def count_words(text : str):
+    """Function counts information about the number of words in a cell
+    
+    Args:
+        text (str) : 
+    Return:
+        len (List[str]): Ammount words in list with words from text
+    """
     words = nltk.word_tokenize(text)
     words_only = [word for word in words if re.match(r"^\w+$", word)]
     return len(words_only)
 
-def read_review(file_path):
+def read_review(file_path : str):
+    """Function returns the text of reviews without spaces
+    
+    Args:
+        file_path (str) : path to the file to be read 
+    Return:
+        review_text(str) : ready text of reviews without spaces
+    """
     with open(file_path, 'r', encoding='utf-8') as file:
         lines = file.readlines()
         if len(lines) >= 4:
@@ -20,11 +35,30 @@ def read_review(file_path):
             return review_text.strip()
         else:
             return None
+        
 
-def filter_by_word_count(dataframe, word_count):
+def filter_by_word_count(dataframe : pd.DataFrame, word_count : int):
+    """Function that selects strings for which the value in the column 
+    with the number of words is less than or equal to the specified value.
+
+    Args:
+        dataframe (pd.DataFrame): DataFrame with text information
+        word_count (int): number of words
+    Return:
+        pd.DataFrame: DataFrame with a word count exceeding max count
+    """
     return dataframe[dataframe['Количество слов'] <= word_count]
 
-def filter_by_stars(dataframe, label):
+
+def filter_by_stars(dataframe : pd.DataFrame, label : str):
+    """Function that sorts the dataset by the given DataFrame label.
+    
+    Args:
+        dataframe (pd.DataFrame): DataFrame with text information
+        label (str): DataFrame class label
+    Return:
+        pd.DataFrame: DataFrame with a number of stars
+    """
     dataframe['Количество звёзд'] = dataframe['Количество звёзд'].astype(str)
     if label in ['1', '2', '3', '4', '5']:
         dataframe[dataframe['Количество звёзд'] == label]
@@ -34,7 +68,14 @@ def filter_by_stars(dataframe, label):
         raise ValueError("Неверное значение для метки класса. Допустимые значения: от 1 до 5 и 'other'")
     return dataframe
 
-def plot_word_histogram(dataframe, label):
+
+def plot_word_histogram(dataframe : pd.DataFrame, label : str):
+    """ Function make plot with matplotlib x-axe is a frequency of occurrence, y-axe is a word
+
+    Args: 
+        dataframe (pd.DataFrame): DataFrame with text information
+        label (str): DataFrame class label
+    """
     dataframe['Количество звёзд'] = dataframe['Количество звёзд'].astype(str)
     if label == "other":
         text_block = " ".join(dataframe[~dataframe['Количество звёзд'].isin(['1', '2', '3', '4', '5'])]['Текст рецензии'])
@@ -62,6 +103,8 @@ def plot_word_histogram(dataframe, label):
         plt.text(i, freq + 0.5, str(freq), ha='center', va='bottom', rotation=90, fontsize=8)
 
     plt.show()
+
+
     
 root_folder = 'data'
 
